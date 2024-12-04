@@ -3,7 +3,9 @@ use std::time::Duration;
 use anyhow::Result;
 use env_logger::builder as log_builder;
 use log::{info, LevelFilter};
-use tritonserver_rs::{memory::Sample, options::Options, response::Output, Request, Response, Server};
+use tritonserver_rs::{
+    memory::Sample, options::Options, response::Output, Request, Response, Server,
+};
 
 pub use utils::*;
 

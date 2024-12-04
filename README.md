@@ -105,7 +105,7 @@ For further details, check out the following resources:
 - [Build and deployment instructions](DEPLOY.md).  
 - [Benchmark results](BENCH.md).  
 - [Triton Inference Server guides](https://github.com/triton-inference-server/server/tree/main/docs/README.md).  
-- Documentation on [docs.rs](TODO.com).  
+- Documentation on [docs.rs](https://docs.rs/tritonserver-rs/).  
 
 ---
 
