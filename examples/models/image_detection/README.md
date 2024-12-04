@@ -21,7 +21,7 @@
 
 ## **Class Labels**  
 The class labels can be found in:  
-- [../data/input/image_classes.csv](../data/input/image_classes.csv)  
+- [data/input/image_classes.csv](../../data/input/image_classes.csv)  
 
 To generate this CSV, you can use the following script:  
 ```python

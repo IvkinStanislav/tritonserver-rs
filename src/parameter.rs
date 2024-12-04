@@ -81,7 +81,7 @@ impl Parameter {
     /// Create String Parameter of model config with exact version of the model. \
     /// `config`: model config.pbtxt as json value.
     /// Check [load_config_as_json] to permutate .pbtxt config to json value. \
-    /// If [crate::Options::model_control_mode] set as EXPLICIT and the result of this method is passed to [crate::Server::load_model_with_parametrs],
+    /// If [Options::model_control_mode](crate::options::Options::model_control_mode) set as EXPLICIT and the result of this method is passed to [crate::Server::load_model_with_parametrs],
     /// the server will load only that exact model and only that exact version of it.
     pub fn from_config_with_exact_version(
         mut config: serde_json::Value,
@@ -135,7 +135,7 @@ fn hjson_to_json(value: serde_hjson::Value) -> serde_json::Value {
 /// Load config.pbtxt from the `config_path` and parse it to json value. \
 /// Might be useful if it is required to run model with altered config.
 /// In this case String [Parameter] with name 'config' and the result of this method as data should be created
-/// and passed to [crate::Server::load_model_with_parametrs] ([crate::Options::model_control_mode] set as EXPLICIT required).
+/// and passed to [Server::load_model_with_parametrs](crate::Server::load_model_with_parametrs) ([Options::model_control_mode](crate::options::Options::model_control_mode) set as EXPLICIT required).
 /// Check realization of [Parameter::from_config_with_exact_version] as an example. \
 /// **Note (Subject to change)**: congig must be in [hjson format](https://hjson.github.io/).
 pub fn load_config_as_json<P: AsRef<Path>>(config_path: P) -> Result<serde_json::Value, Error> {

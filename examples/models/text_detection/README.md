@@ -1,3 +1,6 @@
+This example is not quiet ready. You can run this, but not to parse the result of the model.
+
+How to obtain the model.
 ```sh
 CRATE_NAME=Triton-TensorRT-Inference-CRAFT-pytorch
 

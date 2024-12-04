@@ -14,5 +14,5 @@ The model is sourced from [Kaggle - Google YAMNet](https://www.kaggle.com/models
 ### **Audio Classes**  
 The model’s audio classes can be found in:  
 - **Extracted from Archive**: `archive.tar.gz/assets/yamnet_class_map.csv`  
-- **Examples repository**: [../data/input/audio_classes.csv](../data/input/audio_classes.csv)  
+- **Examples repository**: [data/input/audio_classes.csv](../../data/input/audio_classes.csv)  
 

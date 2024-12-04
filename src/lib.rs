@@ -1,7 +1,10 @@
 //! # **Perform easy and efficient ML model inference**
 //!
 //! This crate is designed to run **any** Machine Learning model on **any** architecture with ease and efficiency.  
-//! It leverages the [Triton Inference Server](https://github.com/triton-inference-server/server) (specifically the [Triton C library](https://github.com/triton-inference-server/core)) and provides a similar API with comparable advantages. However, **Tritonserver-rs** allows you to build the inference server locally, offering significant performance benefits. Check the [benchmark](./BENCH.md) for more details.
+//! It leverages the [Triton Inference Server](https://github.com/triton-inference-server/server)
+//! (specifically the [Triton C library](https://github.com/triton-inference-server/core)) and provides a similar API with comparable advantages.
+//! However, **Tritonserver-rs** allows you to build the inference server locally, offering significant performance benefits.
+//! Check the [benchmark](https://github.com/3xMike/tritonserver-rs/blob/main/BENCH.md) for more details.
 //!
 //! ---
 //!
@@ -13,7 +16,7 @@
 //!
 //! Organize your model files in the following structure:
 //!
-//! ```
+//! ```text
 //! models/
 //! ├── yolov8/
 //! |    ├── config.pbtxt
@@ -99,11 +102,11 @@
 //!
 //! # **More Information**
 //!
-//! For further details, check out the following resources (in github repo):  
-//! - Examples/: Learn how to run various ML models using **Tritonserver-rs**, configure inference, prepare models, and deploy.  
-//! - Model configuration guide (MODEL_CONFIGURATION.md).  
-//! - Build and deployment instructions (DEPLOY.md).  
-//! - Benchmark results (BENCH.md).  
+//! For further details, check out the following resources (in [github repo](https://github.com/3xMike/tritonserver-rs/blob/main)):  
+//! - [Examples](https://github.com/3xMike/tritonserver-rs/blob/main/examples): Learn how to run various ML models using **Tritonserver-rs**, configure inference, prepare models, and deploy.  
+//! - [Model configuration guide](https://github.com/3xMike/tritonserver-rs/blob/main/MODEL_CONFIGURATION.md).  
+//! - [Build and deployment instructions](https://github.com/3xMike/tritonserver-rs/blob/main/DEPLOY.md).  
+//! - [Benchmark results](https://github.com/3xMike/tritonserver-rs/blob/main/BENCH.md).  
 //! - [Triton Inference Server guides](https://github.com/triton-inference-server/server/tree/main/docs/README.md).  
 //!
 //! ---
