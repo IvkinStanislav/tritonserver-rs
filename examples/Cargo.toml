@@ -1,0 +1,63 @@
+[package]
+name = "triton_examples"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+gpu = ["tritonserver-rs/gpu"]
+
+audio = ["hound", "serde", "csv"]
+simple = []
+generator = ["image", "rand"]
+text_detection = ["image"]
+image_detection = [
+    "ab_glyph",
+    "csv",
+    "image",
+    "imageproc",
+    "random_color",
+    "serde",
+]
+
+[dependencies]
+anyhow = { version = "1.0.75" }
+config-manager = { version = "0.2.0" }
+env_logger = { version = "0.9" }
+log = "0.4"
+tokio = { version = "1.32", features = ["full"] }
+tritonserver-rs = { path = "..", default-features = false } # TODO: change path
+
+ab_glyph = { version = "0.2.23", optional = true }
+csv = { version = "1.3", optional = true }
+hound = { version = "3.5", optional = true }
+image = { version = "0.25", optional = true }
+imageproc = { version = "0.24", optional = true }
+rand = { version = "0.8.5", optional = true }
+random_color = { version = "1", optional = true }
+serde = { version = "1", optional = true }
+
+[[bin]]
+name = "audio"
+path = "src/bin/audio_classification.rs"
+required_features = ["audio"]
+
+[[bin]]
+name = "simple"
+path = "src/bin/simple_model.rs"
+required_features = ["simple"]
+
+[[bin]]
+name = "generator"
+path = "src/bin/mnist_generator.rs"
+required_features = ["generator"]
+
+[[bin]]
+name = "text_detection"
+path = "src/bin/text_detection.rs"
+required_features = ["text_detection"]
+
+[[bin]]
+name = "image_detection"
+path = "src/bin/image_detection.rs"
+required_features = ["image_detection"]

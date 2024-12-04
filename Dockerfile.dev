@@ -1,0 +1,31 @@
+ARG TRITON_CONTAINER_VERSION=23.01
+
+FROM nvcr.io/nvidia/tritonserver:${TRITON_CONTAINER_VERSION}-py3
+ARG RUST_VERSION=1.80.1
+
+RUN ln -s /opt/tritonserver/lib/libtritonserver.so /lib/x86_64-linux-gnu/libtritonserver.so
+
+# Install the curl and build-essential packages
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    curl \
+    build-essential \
+    gdb \
+    libclang-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Rust install
+RUN mkdir -p /opt/rust
+ENV RUSTUP_HOME=/opt/rust
+ENV PATH=$PATH:/opt/rust/bin
+ENV CARGO_HOME=/opt/rust
+
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
+    sh -s -- -y --default-toolchain ${RUST_VERSION} \
+    --profile minimal -c rustfmt -c clippy -c rust-src
+
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
+
+# Set up linking env
+ENV LIBRARY_PATH=/opt/tritonserver/lib:${LIBRARY_PATH}
+ENV LD_LIBRARY_PATH=/opt/tritonserver/lib:${LD_LIBRARY_PATH}

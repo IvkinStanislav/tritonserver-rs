@@ -1,0 +1,9 @@
+ARG TRITON_CONTAINER_VERSION=23.01
+ARG TRITON_IMAGE=nvcr.io/nvidia/tritonserver:${TRITON_CONTAINER_VERSION}-py3
+FROM ${TRITON_IMAGE}
+
+RUN ln -s /opt/tritonserver/lib/libtritonserver.so /lib/x86_64-linux-gnu/libtritonserver.so
+RUN set -eux; \
+    conf="/etc/ld.so.conf.d/triton.conf"; \
+    echo /opt/tritonserver/lib >> ${conf}; \
+    ldconfig;

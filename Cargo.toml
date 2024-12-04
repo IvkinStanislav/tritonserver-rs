@@ -1,0 +1,44 @@
+[package]
+name = "tritonserver-rs"
+version = "0.1.0"
+edition = "2021"
+authors = [
+    "Mikhail Mikhailov <mikhailov.mm@phystech.edu>",
+    "Andrey Chesnokov <chessnokov@gmail.com>",
+]
+description = "Pefrorm easy and efficient ML models inference"
+exclude = ["/examples"]
+readme = "README.md"
+repository = "https://github.com/3xMike/tritonserver-rs"
+license = "MIT"
+keywords = ["inference", "ai", "ml", "async", "server"]
+categories = ["science", "computer-vision", "api-bindings"]
+
+[features]
+gpu = ["cuda-driver-sys", "parking_lot"]
+default = ["gpu"]
+
+[dependencies]
+async-trait = "0.1.81"
+bitflags = "1.3.2"
+cfg-if = "1"
+cuda-driver-sys = { version = "0.3", optional = true }
+futures = "0.3"
+half = "2.4.1"
+lazy_static = "1.4.0"
+libc = "0.2"
+log = "0.4"
+parking_lot = { version = "0.12.2", optional = true }
+serde = { version = "1.0", features = ["derive"] }
+serde-hjson = "0.9"
+serde_json = { version = "1.0" }
+tokio = { version = "1.32", features = [
+    "sync",
+    "rt",
+    "macros",
+    "rt-multi-thread",
+    "time",
+] }
+
+[build-dependencies]
+bindgen = "0.69"

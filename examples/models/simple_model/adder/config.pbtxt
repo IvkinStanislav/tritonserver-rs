@@ -1,0 +1,21 @@
+name: "adder"
+backend: "python"
+input [
+  {
+    data_type: TYPE_FP32
+    name: "input"
+    dims: [ 1, -1, -1, -1 ]
+  }
+]
+output [
+  {
+    data_type: TYPE_FP32
+    name: "output"
+    dims: [ 1 ]
+  }
+]
+instance_group [
+  {
+    kind: KIND_CPU
+  }
+]
