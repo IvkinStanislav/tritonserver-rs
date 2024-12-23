@@ -1,4 +1,9 @@
-use std::{collections::HashMap, ffi::c_void, mem::forget, ptr::null_mut, sync::Arc};
+use std::{
+    collections::HashMap,
+    ffi::c_void,
+    ptr::null_mut,
+    sync::{atomic::AtomicBool, Arc},
+};
 
 use log::trace;
 use tokio::{
@@ -37,13 +42,22 @@ impl std::fmt::Display for InferenceError {
 
 impl std::error::Error for InferenceError {}
 
-/// Future that returns the inference response.
+/// Future that returns the inference response. \
+/// The request can be cancelled by dropping this structure.
 ///
 /// Also the input buffers assigned to the request can be returned via [get_input_release](ResponseFuture::get_input_release).
 pub struct ResponseFuture {
     pub(super) response_receiver: Receiver<Result<Response, InferenceError>>,
     pub(super) input_release: Option<InputRelease>,
+    pub(super) request_ptr: Arc<RequestCanceller>,
 }
+
+pub(super) struct RequestCanceller {
+    pub(crate) is_inferenced: AtomicBool,
+    pub(crate) request_ptr: *mut sys::TRITONSERVER_InferenceRequest,
+}
+unsafe impl Send for RequestCanceller {}
+unsafe impl Sync for RequestCanceller {}
 
 /// Struct that returns input buffers assigned to the request. \
 /// Note: input buffer can be released in any time from the start of the inference
@@ -53,7 +67,7 @@ pub struct ResponseFuture {
 pub struct InputRelease(pub(super) oneshot::Receiver<HashMap<String, Buffer>>);
 
 /// Start inference.
-impl<'a> Request<'a> {
+impl Request<'_> {
     /// Perform inference using the metadata and inputs supplied by the Request(self). \
     /// If the function returns success,
     /// the returned struct can be used to get results (.await) of the inference and
@@ -77,7 +91,7 @@ impl<'a> Request<'a> {
         let trace = self.custom_trace.take();
 
         // Add outputs.
-        self.add_outputs()?;
+        let datatype_hints = self.add_outputs()?;
         let outputs_count = self.server.get_model(&self.model_name)?.outputs.len();
 
         let runtime = self.server.runtime.clone();
@@ -117,7 +131,11 @@ impl<'a> Request<'a> {
         // Так как Allocator используется тритоном в методе release, который вызывается после удаления Response,
         // необходимо отправить алокатор в response_wrapper -> Response, чтобы Arc не дропнулся раньше времени.
         // Имена буферов отправляется в response_wrapper, на нем будем ждать возвращенные буферы для Response.
-        let allocator = Arc::new(Allocator::new(custom_allocator, runtime.clone())?);
+        let allocator = Arc::new(Allocator::new(
+            custom_allocator,
+            datatype_hints,
+            runtime.clone(),
+        )?);
 
         let allocator_ptr = Arc::as_ptr(&allocator);
         // response_tx отправляется в response_wrapper,
@@ -140,7 +158,7 @@ impl<'a> Request<'a> {
 
         let trace_ptr = trace
             .as_ref()
-            .map(|trace| trace.ptr)
+            .map(|trace| trace.ptr.0)
             .unwrap_or_else(null_mut);
 
         triton_call!(sys::TRITONSERVER_ServerInferAsync(
@@ -149,12 +167,17 @@ impl<'a> Request<'a> {
             trace_ptr
         ))?;
 
-        // Do not drop the trace, it drops in trace::release_fn
-        let _ = trace.map(forget);
+        if let Some(trace) = trace {
+            std::mem::forget(trace.ptr);
+        }
 
         Ok(ResponseFuture {
             response_receiver: response_rx,
             input_release: Some(InputRelease(input_rx)),
+            request_ptr: Arc::new(RequestCanceller {
+                request_ptr,
+                is_inferenced: AtomicBool::new(false),
+            }),
         })
     }
 }

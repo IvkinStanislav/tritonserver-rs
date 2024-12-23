@@ -51,6 +51,7 @@ pub trait Sample: private::Sealed {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[repr(u32)]
 pub enum DataType {
+    Invalid = sys::TRITONSERVER_datatype_enum_TRITONSERVER_TYPE_INVALID,
     Bool = sys::TRITONSERVER_datatype_enum_TRITONSERVER_TYPE_BOOL,
     Uint8 = sys::TRITONSERVER_datatype_enum_TRITONSERVER_TYPE_UINT8,
     Uint16 = sys::TRITONSERVER_datatype_enum_TRITONSERVER_TYPE_UINT16,
@@ -64,6 +65,7 @@ pub enum DataType {
     Fp32 = sys::TRITONSERVER_datatype_enum_TRITONSERVER_TYPE_FP32,
     Fp64 = sys::TRITONSERVER_datatype_enum_TRITONSERVER_TYPE_FP64,
     Bytes = sys::TRITONSERVER_datatype_enum_TRITONSERVER_TYPE_BYTES,
+    Bf16 = sys::TRITONSERVER_datatype_enum_TRITONSERVER_TYPE_BF16,
 }
 
 #[derive(Clone, Copy)]
@@ -82,6 +84,7 @@ impl_sample!(i32, DataType::Int32);
 impl_sample!(i64, DataType::Int64);
 
 impl_sample!(half::f16, DataType::Fp16);
+impl_sample!(half::bf16, DataType::Bf16);
 impl_sample!(f32, DataType::Fp32);
 impl_sample!(f64, DataType::Fp64);
 
@@ -194,7 +197,13 @@ impl Buffer {
         Self::alloc_with_data_type(count, memory_type, T::DATA_TYPE)
     }
 
-    pub(crate) fn alloc_with_data_type(
+    /// Allocate new buffer of requested memory type.\
+    /// `count`: size of buffer in `T` units (i.e. 128 chunks of f32 (that has byte size 512) should be allocated with `count=128`).\
+    /// `memory_type`: Cpu/Pinned/Gpu.\
+    /// `data_type`: type of Samples.
+    ///
+    /// **Note**: If memory type is not Cpu, should be called in sync with cuda context pinned (check module level documentation for more info).
+    pub fn alloc_with_data_type(
         count: usize,
         memory_type: MemoryType,
         data_type: DataType,
