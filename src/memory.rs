@@ -97,9 +97,13 @@ impl DataType {
             .unwrap_or(CSTR_CONVERT_ERROR_PLUG)
     }
 
-    /// Get the size of a Triton datatype in bytes. Zero is returned for [DataType::Bytes] because it have variable size.
+    /// Get the size of a Triton datatype in bytes. For [DataType::Bytes] the size of one element is returned.
     pub fn size(self) -> u32 {
-        unsafe { sys::TRITONSERVER_DataTypeByteSize(self as u32) }
+        if self == Self::Bytes {
+            size_of::<Byte>() as u32
+        } else {
+            unsafe { sys::TRITONSERVER_DataTypeByteSize(self as u32) }
+        }
     }
 }
 
